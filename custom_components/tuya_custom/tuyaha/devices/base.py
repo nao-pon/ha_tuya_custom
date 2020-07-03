@@ -61,12 +61,7 @@ class TuyaDevice:
         if state is None:
             return None
         elif isinstance(state, str):
-            if state.isdecimal():
-                return state
-            else:
-                return strtobool(state)
-        elif isinstance(state, int):
-            return state
+            return strtobool(state)
         else:
             return bool(state)
 
