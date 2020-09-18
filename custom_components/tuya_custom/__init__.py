@@ -75,7 +75,7 @@ TUYA_DEVICE_CONF_SCHEMA = {
                     vol.Optional(CONF_CURR_TEMP_DIVIDER, default=0): cv.positive_int,
                     vol.Optional(CONF_EXT_TEMP_SENSOR): cv.string,
                     vol.Optional(CONF_SUPPORT_COLOR): cv.boolean,
-                    vol.Optional(CONF_BRIGHTNESS_RANGE_MODE, default=0): cv.positive_int,
+                    vol.Optional(CONF_BRIGHTNESS_RANGE_MODE, default=1): cv.positive_int,
                     vol.Optional(CONF_MAX_COLOR_TEMP, default=0): cv.positive_int,
                 }
             )
