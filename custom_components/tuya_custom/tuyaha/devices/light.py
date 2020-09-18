@@ -2,11 +2,8 @@ from .base import TuyaDevice
 
 """The minimum brightness value set in the API that does not turn off the light."""
 MIN_BRIGHTNESS = 10.3
-BRIGHTNESS_WHITE_RANGE = (10, 1000)
-BRIGHTNESS_COLOR_RANGE = (1, 255)
 BRIGHTNESS_STD_RANGE = (1, 255)
 
-COLTEMP_STATUS_RANGE = (1000, 36294)
 COLTEMP_SET_RANGE = (1000, 10000)
 COLTEMP_KELV_RANGE = (2700, 6500)
 
@@ -16,9 +13,12 @@ class TuyaLight(TuyaDevice):
     def __init__(self, data, api):
         super().__init__(data, api)
         self._support_color = False
+        self.brightness_white_range = BRIGHTNESS_STD_RANGE
+        self.brightness_color_range = BRIGHTNESS_STD_RANGE
+        self.color_temp_range = COLTEMP_SET_RANGE
 
-    def set_support_color(self, supported):
-        self._support_color = supported
+    def force_support_color(self):
+        self._support_color = True
 
     def _color_mode(self):
         work_mode = self.data.get("color_mode", "white")
@@ -55,9 +55,9 @@ class TuyaLight(TuyaDevice):
 
     def _brightness_range(self):
         if self._color_mode():
-            return BRIGHTNESS_COLOR_RANGE
+            return self.brightness_color_range
         else:
-            return BRIGHTNESS_WHITE_RANGE
+            return self.brightness_white_range
 
     def support_color(self):
         if not self._support_color:
@@ -82,7 +82,7 @@ class TuyaLight(TuyaDevice):
         temp = self.data.get("color_temp")
         ret_value = TuyaLight._scale(
             temp,
-            COLTEMP_STATUS_RANGE,
+            self.color_temp_range,
             COLTEMP_KELV_RANGE,
         )
         return round(ret_value)
@@ -124,7 +124,7 @@ class TuyaLight(TuyaDevice):
     def set_color(self, color):
         """Set the color of light."""
         cur_brightness = self.data.get("color", {}).get(
-            "brightness", BRIGHTNESS_COLOR_RANGE[0]
+            "brightness", self.brightness_color_range[0]
         )
         hsv_color = {
             "hue": color[0] if color[1] != 0 else 0,  # color white
@@ -157,9 +157,6 @@ class TuyaLight(TuyaDevice):
             data_value = TuyaLight._scale(
                 color_temp,
                 COLTEMP_KELV_RANGE,
-                COLTEMP_STATUS_RANGE,
+                self.color_temp_range,
             )
             self._update_data("color_temp", round(data_value))
-
-    def update(self):
-        return self._update(use_discovery=True)

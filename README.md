@@ -1,4 +1,7 @@
 # Integration ha_tuya_custom
+
+**Important:** Due to dedicated Tuya API limitation, the refresh interval cannot be faster than 5 minutes
+(reduced to 1 minute if you have only 1 device). Do not open issue to ask faster refresh because it is not possible. 
  
 This custom component is the copy of the component implemented in Home Assistant but some modifications to the library
 used to communicate with Tuya Cloud have been implemented inside it.
@@ -52,6 +55,10 @@ tuya_custom:
   devices_config:
     - device_name: <Friendly Name of your device in HA> # this is mandatory with at least one of the other keys
       support_color: true # true or false, force color support for device
+      brightness_range_mode: 0 # 0 = use brightness range 10-1000
+                               # 1 = use brightness range 1-255
+      max_color_temp: 10000 # min val = 10000
+                            # define the maximum color temp reported by the light to ajust color temp slider 
 ```
 
 - For climate device:
